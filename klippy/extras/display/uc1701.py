@@ -232,6 +232,7 @@ class SSD1306(DisplayBase):
             io_bus = io.spi
         self.reset = ResetHelper(config.get("reset_pin", None), io_bus)
         DisplayBase.__init__(self, io, columns)
+        self.deselect = config.getint('deselect', 0, minval=0, maxval=63)
     def init(self):
         self.reset.init()
         init_cmds = [
@@ -247,7 +248,7 @@ class SSD1306(DisplayBase):
             0xDA, 0x12, # Set COM pins hardware configuration
             0x81, 0xEF, # Set contrast control
             0xD9, 0xA1, # Set pre-charge period
-            0xDB, 0x00, # Set VCOMH deselect level
+            0xDB, self.deselect, # Set VCOMH deselect level
             0x2E,       # Deactivate scroll
             0xA4,       # Output ram to display
             0xA6,       # Normal display
